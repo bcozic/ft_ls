@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/03/21 11:39:24 by bcozic           ###   ########.fr        #
+#    Updated: 2018/03/21 12:05:26 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ fclean_libft : clean_libft
 	@rm -f $(LIBFT)
 
 fclean : clean
-	@rm -f $(LEM_IN)
+	@rm -f $(NAME)
 	@echo "exe deleted"
 
 re : fclean all
