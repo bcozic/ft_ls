@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barbara <barbara@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 19:51:01 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/19 11:58:00 by barbara          ###   ########.fr       */
+/*   Updated: 2018/03/29 11:21:47 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,9 @@
 # define LIBFT_H
 
 # include <string.h>
+# include "ft_printf.h"
 
-# define BUFF_SIZE	512
-
-/************************************************/
-/*	TO DElETE WHEN I FIND MY FT_PRINTF !!!!!!	*/
-/************************************************/
-/****/										/****/
-/****/		# include <stdio.h>				/****/
-/****/		# define ft_printf printf		/****/
-/****/										/****/
-/************************************************/
+# define BUFF_SIZE	256
 
 typedef struct		s_list
 {
@@ -70,6 +62,7 @@ int					ft_toupper(int c);
 int					ft_tolower(int c);
 int					ft_isnum(char *str);
 int					ft_isstr_f(char *str, int(*f)(int c));
+int					ft_isstr_forf(char *str, int(*f)(int), int(*f2)(int));
 void				*ft_memalloc(size_t size);
 void				ft_memdel(void **ap);
 char				*ft_strnew(size_t size);
@@ -104,6 +97,7 @@ void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 size_t				ft_lstlen(t_list *begin);
 void				*ft_realloc(void *str, size_t size, size_t new_size);
+void				ft_strup(char *str);
 int					get_next_line(const int fd, char **line);
 
 #endif

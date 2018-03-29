@@ -1,35 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi_unsigned.c                                 :+:      :+:    :+:   */
+/*   ft_isstr_forf.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcozic <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/16 09:12:33 by bcozic            #+#    #+#             */
-/*   Updated: 2018/01/16 09:15:42 by bcozic           ###   ########.fr       */
+/*   Created: 2018/02/03 11:56:21 by bcozic            #+#    #+#             */
+/*   Updated: 2018/02/03 13:38:17 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-unsigned int	ft_atoi_unsigned(const char *str)
+int		ft_isstr_forf(char *str, int (*f)(int), int (*f2)(int))
 {
-	int				i;
-	int				neg;
-	unsigned int	result;
+	size_t	i;
 
-	result = 0;
-	neg = 1;
 	i = 0;
-	while (str[i] && ft_isspace(str[i]))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (ft_isdigit(str[i]))
+	while (str[i])
 	{
-		result *= 10;
-		result += (unsigned int)(str[i] - '0');
+		if (!f((int)str[i]) && !(f2((int)str[i])))
+			return (0);
 		i++;
 	}
-	return (result);
+	return (1);
 }

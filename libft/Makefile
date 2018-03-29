@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bcozic <marvin@42.fr>                      +#+  +:+       +#+         #
+#    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 18:10:54 by bcozic            #+#    #+#              #
-#    Updated: 2018/02/01 10:13:08 by bcozic           ###   ########.fr        #
+#    Updated: 2018/03/29 11:25:07 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -Weverything
 
 SRC = ft_abs.c\
 	  ft_isint.c\
@@ -50,6 +50,7 @@ SRC = ft_abs.c\
 	  ft_toupper.c\
 	  ft_tolower.c\
 	  ft_isstr_f.c\
+	  ft_isstr_forf.c\
 	  ft_memalloc.c\
 	  ft_memdel.c\
 	  ft_strnew.c\
@@ -84,34 +85,50 @@ SRC = ft_abs.c\
 	  ft_lstmap.c\
 	  ft_lstlen.c\
 	  ft_realloc.c\
+	  ft_strup.c\
 	  get_next_line.c
 
-SSRC = $(addprefix src/, $(SRC))
+SRC_PRINTF = ft_printf.c\
+			 chrflags.c\
+			 add_arg.c\
+			 apply_flag.c\
+			 convert_nb.c\
+			 flag_cara.c\
+			 llitoa_base_mod.c\
+			 ullitoa_base_mod.c\
+			 unicode.c\
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(addprefix obj/, $(SRC:.c=.o))
 
-SOBJ = $(addprefix obj/, $(OBJ))
+OBJ_PRINTF = $(addprefix ft_printf/obj/, $(SRC_PRINTF:.c=.o))
 
 all : $(NAME)
 
 obj :
-	@mkdir obj
+	mkdir obj
+
+ft_printf/obj :
+	mkdir ft_printf/obj
+
+ft_printf/obj/%.o: ft_printf/src/%.c
+	gcc $(CFLAGS) -c $< -o $@ -I includes
 
 obj/%.o: src/%.c
-	@gcc $(CFLAGS) -c $< -o $@ -I includes
+	gcc $(CFLAGS) -c $< -o $@ -I includes
 
-$(NAME) : obj $(SOBJ)
-	@ar rc $(NAME) $(SOBJ)
-	@ranlib $(NAME)
+$(NAME) : obj ft_printf/obj $(OBJ) $(OBJ_PRINTF)
+	ar rc $(NAME) $(OBJ) $(OBJ_PRINTF)
+	ranlib $(NAME)
 	@echo "Compile OK"
 
 clean :
-	@rm -f $(SOBJ)
+	rm -f $(OBJ) $(OBJ_PRINTF)
 	@echo "Obj Deleted"
 
 fclean : clean
-	@rm -f $(NAME)
+	rm -f $(NAME)
 	@echo "Program Deleted"
 
 re : fclean all
 
+.PHONY : re all clean fclean

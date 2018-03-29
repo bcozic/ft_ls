@@ -1,35 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi_unsigned.c                                 :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcozic <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/16 09:12:33 by bcozic            #+#    #+#             */
-/*   Updated: 2018/01/16 09:15:42 by bcozic           ###   ########.fr       */
+/*   Created: 2017/11/22 20:49:16 by bcozic            #+#    #+#             */
+/*   Updated: 2017/11/22 20:49:19 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
 
-unsigned int	ft_atoi_unsigned(const char *str)
-{
-	int				i;
-	int				neg;
-	unsigned int	result;
+int		ft_printf(const char *restrict format, ...);
 
-	result = 0;
-	neg = 1;
-	i = 0;
-	while (str[i] && ft_isspace(str[i]))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (ft_isdigit(str[i]))
-	{
-		result *= 10;
-		result += (unsigned int)(str[i] - '0');
-		i++;
-	}
-	return (result);
-}
+#endif
