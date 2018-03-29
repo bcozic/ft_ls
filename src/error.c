@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 11:02:45 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/21 12:00:09 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/29 13:28:15 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,22 @@
 
 void	free_option(t_option *option)
 {
-	t_dir	*current;
-	t_dir	*to_free;
+	t_file	*current;
+	t_file	*to_free;
 
 	current = option->dir;
 	while (current)
 	{
 		to_free = current;
-		current = current ->next;
+		current = current->next;
+		free(to_free->name);
+		free(to_free);
+	}
+	current = option->files;
+	while (current)
+	{
+		to_free = current;
+		current = current->next;
 		free(to_free->name);
 		free(to_free);
 	}
@@ -29,7 +37,7 @@ void	free_option(t_option *option)
 
 void	display_help(t_option *option)
 {
-	ft_printf("Usage: ls [OPTION]... [FILE]...\n"
+	ft_printf("Usage: ./ft_ls [OPTION]... [FILE]...\n"
 	"List information about the FILEs (the current directory by default).\n"
 	"Sort entries alphabetically if none of -r nor -t is specified.\n"
 	"-a, --all                  do not ignore entries starting with .\n"
@@ -50,11 +58,11 @@ void	display_help(t_option *option)
 void	error_option(t_option *option, char *str)
 {
 	if (str[0] == '-' && str[1] == '-')
-		ft_printf("ls: unrecognized option '%s'\n"
-		"Try 'ls --help' for more information.\n", str);
+		ft_printf("ft_ls: unrecognized option '%s'\n"
+		"Try './ft_ls --help' for more information.\n", str);
 	else
 		ft_printf("ls: invalid option -- '%c'\n"
-		"Try 'ls --help' for more information.\n", *str);
+		"Try './ft_ls --help' for more information.\n", *str);
 	free_option(option);
 	exit(2);
 }
@@ -64,4 +72,9 @@ void	error_malloc(t_option *option)
 	ft_printf(RED"ERROR malloc\n"EOC);
 	free_option(option);
 	exit(2);
+}
+
+void	error_name_file(char *str)
+{
+	ft_printf("ft_ls: %s: No such file or directory\n", str);
 }

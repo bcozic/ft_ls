@@ -6,16 +6,18 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/03/21 12:05:26 by bcozic           ###   ########.fr        #
+#    Updated: 2018/03/29 14:58:10 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ls
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -Weverything
 
 SRC = main.c\
 	  parsing.c\
+	  pars_file.c\
+	  list_files.c\
 	  error.c
 
 OBJ = $(addprefix obj/, $(SRC:.c=.o))

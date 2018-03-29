@@ -6,44 +6,34 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:19:49 by barbara           #+#    #+#             */
-/*   Updated: 2018/03/21 11:59:56 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/29 16:48:08 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static void	add_directory(t_dir *current, char *str, t_option *option)
-{
-	t_dir	*new;
-
-	if (!(new = (t_dir *)malloc(sizeof(t_dir))))
-		error_malloc(option);
-	if (current == option->dir)
-	{
-		new->next = option->dir;
-		option->dir = new;
-	}
-	else
-	{
-		new->next = current->next;
-		current->next = new;
-	}
-	new->name = ft_strdup(str);
-}
-
 void	parsing(int argc, char **argv, t_option *option)
 {
-	while (--argc > 0)
+	int				i;
+
+	ioctl(0, TIOCGWINSZ , &(option->size_term));
+	i = 0;
+	while (++i < argc)
 	{
-		if (!ft_strncmp(argv[argc], "--", 2))
-			option_full_name(argv[argc], option);
-		else if (argv[argc][0] == '-')
-			option_short_name(argv[argc], option);
+		if (!ft_strncmp(argv[i], "--", 2))
+			option_full_name(argv[i], option);
+		else if (argv[i][0] == '-')
+			option_short_name(argv[i], option);
 		else
-			dir_name(argv[argc], option);
+		{
+			i--;
+			break ;
+		}
 	}
-	if (option->dir == NULL)
-		add_directory(option->dir, ".", option);
+	if (i == argc)
+		pars_file(".", option);
+	while (++i < argc)
+		pars_file(argv[i], option);
 }
 
 void	option_full_name(char *str, t_option *option)
@@ -75,25 +65,4 @@ void	option_short_name(char *str, t_option *option)
 			option->t = TRUE;
 		else
 			error_option(option, str);
-}
-
-void	dir_name(char *str, t_option *option)
-{
-	t_dir	*current;
-
-	current = option->dir;
-	if ((option->dir == NULL) || (ft_strcmp(option->dir->name, str)) < 0)
-	{
-		add_directory(current, str, option);
-		return ;
-	}
-	while (current->next)
-	{
-		if (ft_strcmp(current->name, str) < 0)
-		{
-			add_directory(current, str, option);
-			return ;
-		}
-	}
-	add_directory(current, str, option);
 }
