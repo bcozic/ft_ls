@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bcozic <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/11 13:10:30 by bcozic            #+#    #+#             */
-/*   Updated: 2018/01/09 20:36:51 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/30 14:35:31 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,8 @@ char		*ft_itoa(int n)
 
 	cpy = n;
 	size = 1;
-	neg = 1;
-	if (n < 0)
-	{
-		size++;
-		neg = -1;
-	}
-	while (cpy >= 10 || cpy <= -10)
-	{
-		size++;
-		cpy /= 10;
-	}
+	neg = (n < 0) ? -1 : 1;
+	size += ft_nbrlen(n);
 	if (!(str = (char *)malloc(sizeof(char) * (size_t)(size + 1))))
 		return (0);
 	w_in_str(str, size, neg, n);

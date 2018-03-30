@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   chrflags.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bcozic <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/03 19:08:56 by bcozic            #+#    #+#             */
-/*   Updated: 2017/12/09 11:46:29 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/30 13:32:04 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "ft_printf_data.h"
-
+#include <stdio.h>
 int		chr_arg(va_list va, const char *restrict format, int *i, char *buffer)
 {
 	int		nb[2];
@@ -23,6 +23,8 @@ int		chr_arg(va_list va, const char *restrict format, int *i, char *buffer)
 	ft_bzero(buff_f, 256);
 	ft_bzero(nb, sizeof(int) * 2);
 	*i = save_flags(format, *i, buff_f, nb);
+	if (buff_f['*'])
+		nb[0] = va_arg(va, int);
 	len = send_flag(va, buff_f, buffer, nb);
 	return (len);
 }

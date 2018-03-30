@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_printf_data.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bcozic <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 14:04:32 by bcozic            #+#    #+#             */
-/*   Updated: 2017/12/09 12:14:53 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/30 13:31:42 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stdlib.h>
 
 # define LIST_CONV "sSpPoOuUxXcCdDibB%\0\0\0\0\0\0\0\0\0\0"
-# define VALID_F "sSpPoOuUxXcCdDibB%0-.#+ hjzl"
+# define VALID_F "sSpPoOuUxXcCdDibB%0-.#+ hjzl*"
 # define MODIFER "zjlh"
 
 int		write_buff(char *buffer);

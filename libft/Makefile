@@ -6,15 +6,16 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 18:10:54 by bcozic            #+#    #+#              #
-#    Updated: 2018/03/29 11:25:07 by bcozic           ###   ########.fr        #
+#    Updated: 2018/03/30 14:36:12 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
-CFLAGS = -Wall -Wextra -Werror -Weverything
+CFLAGS = -Wall -Wextra -Werror -Weverything -g
 
 SRC = ft_abs.c\
+	  ft_nbrlen.c\
 	  ft_isint.c\
 	  ft_memset.c\
 	  ft_bzero.c\

@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 19:51:01 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/29 11:21:47 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/30 14:38:48 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct		s_list
 }					t_list;
 
 int					ft_abs(int nb);
+int					ft_nbrlen(long long n);
 int					ft_isint(char *str);
 void				*ft_memset(void *b, int c, size_t len);
 void				ft_bzero(void *s, size_t n);

@@ -6,34 +6,11 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 11:02:45 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/29 13:28:15 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/03/29 17:56:28 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-void	free_option(t_option *option)
-{
-	t_file	*current;
-	t_file	*to_free;
-
-	current = option->dir;
-	while (current)
-	{
-		to_free = current;
-		current = current->next;
-		free(to_free->name);
-		free(to_free);
-	}
-	current = option->files;
-	while (current)
-	{
-		to_free = current;
-		current = current->next;
-		free(to_free->name);
-		free(to_free);
-	}
-}
 
 void	display_help(t_option *option)
 {
