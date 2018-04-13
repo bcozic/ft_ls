@@ -6,42 +6,69 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/30 19:47:56 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/13 22:02:32 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
+static void	get_link(t_file *file, t_option *option)
+{
+	ssize_t	len;
+
+	if (file->right[0] != 'l')
+	{
+		file->link = option->no_link;
+		return ;
+	}
+	if (!(file->link = (char *)malloc(sizeof(char) * 256)))
+		err_malloc(option);
+	ft_strcpy(file->link, " -> ");
+	if ((len = readlink(file->name, file->link + 4, 252)) == -1)
+	{
+		perror(NULL);
+		other_err(option);
+	}
+	file->link[len + 4] = '\0';
+}
+
 static char	find_type(mode_t type)
 {
-	if ((type & S_IFSOCK) == S_IFSOCK)
-		return ('s');
-	if (type & S_IFREG)
-		return ('-');
-	if (type & S_IFDIR)
-		return ('d');
-	if (type & S_IFCHR)
-		return ('c');
-	if (type & S_IFBLK)
-		return ('b');
-	if (type & S_IFLNK)
-		return ('l');
-	if (type & S_IFIFO)
-		return ('p');
-	return (0);
+	char	ret;
+
+	ret = 0;
+	if (type == S_IFSOCK)
+		ret = 's';
+	else if (type == S_IFLNK)
+		ret = 'l';
+	else if (type == S_IFWHT)
+		ret = ' ';
+	else if (type == S_IFREG)
+		ret = '-';
+	else if (type == S_IFDIR)
+		ret = 'd';
+	else if (type == S_IFCHR)
+		ret = 'c';
+	else if (type == S_IFBLK)
+		ret = 'b';
+	else if (type == S_IFIFO)
+		ret = 'p';
+	return (ret);
 }
 
 static void	find_rights(struct stat buff, t_file *file)
 {
-	int	i;
+	int		i;
+	mode_t	mode;
 
+	mode = buff.st_mode;
 	i = 0;
-	file->right[0] = find_type(buff.st_mode);
+	file->right[0] = find_type(mode & S_IFMT);
 	while (i < 3)
 	{
-		file->right[3 * i + 1] = (buff.st_mode & (S_IRUSR >> (3 * i))) ? 'r' : '-';
-		file->right[3 * i + 2] = (buff.st_mode & (S_IWUSR >> (3 * i))) ? 'w' : '-';
-		file->right[3 * i + 3] = (buff.st_mode & (S_IXUSR >> (3 * i))) ? 'x' : '-';
+		file->right[3 * i + 1] = (mode & (S_IRUSR >> (3 * i))) ? 'r' : '-';
+		file->right[3 * i + 2] = (mode & (S_IWUSR >> (3 * i))) ? 'w' : '-';
+		file->right[3 * i + 3] = (mode & (S_IXUSR >> (3 * i))) ? 'x' : '-';
 		i++;
 	}
 	file->right[10] = '\0';
@@ -54,20 +81,26 @@ static void	add_data(t_option *option, t_file *file, struct stat buff)
 
 	if (option->l == TRUE)
 	{
-		file->user_name = ft_strdup((getpwuid(buff.st_uid))->pw_name);
-		file->grp_name = ft_strdup((getgrgid(buff.st_gid))->gr_name);
+		if (!(file->user_name = ft_strdup(((getpwuid(buff.st_uid))->pw_name) ?
+				(getpwuid(buff.st_uid))->pw_name : "*")))
+			err_malloc(option);
+		if (!(file->grp_name = ft_strdup((getgrgid(buff.st_gid))->gr_name)))
+			err_malloc(option);
 		if ((size = ft_strlen(file->user_name) + 2) > (size_t)option->size_usr)
 			option->size_usr = (int)size;
 		if ((size = ft_strlen(file->grp_name)) > (size_t)option->size_grp)
 			option->size_grp = (int)size;
 	}
 	find_rights(buff, file);
-	if ((size = ft_strlen(file->name) + 8) > option->max_size_name)
+	get_link(file, option);
+	if ((size = ft_strlen(file->name) + 6) > option->max_size_name)
 		option->max_size_name = size;
 	option->nb_files++;
-	if ((size = (size_t)ft_nbrlen(buff.st_size) + 2) > (size_t)option->max_size_size)
+	if ((size = (size_t)ft_nbrlen(buff.st_size) + 2) >
+			(size_t)option->max_size_size)
 		option->max_size_size = (int)size;
-	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 2) > (size_t)option->size_links)
+	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 2) >
+	(size_t)option->size_links)
 		option->size_links = (int)size;
 }
 
@@ -76,25 +109,31 @@ void		pars_file(char *str, t_option *option)
 	struct stat	buff;
 	t_file		*new_file;
 	char		*all_path;
+
 	if (!(all_path = ft_strjoin(option->path, str)))
-		error_malloc(option);
+		err_malloc(option);
 	new_file = NULL;
-	if (stat(all_path, &buff) == -1)
+	if (lstat(all_path, &buff) == -1)
 	{
 		error_name_file(str);
 		free(all_path);
 		return ;
 	}
 	option->dir_size += (size_t)buff.st_blocks;
-	if ((buff.st_mode & S_IFDIR) && (buff.st_mode & S_IFSOCK) != S_IFSOCK && (!option->in_rec || option->rec == TRUE))
+	if ((buff.st_mode & S_IFMT) == S_IFDIR && (!option->in_rec
+		|| option->rec == TRUE) && !(option->in_rec
+		&& (!ft_strcmp(".", str) || !ft_strcmp("..", str))))
 	{
-		new_file = (option->t == FALSE) ? insert_name(all_path, option, &option->dir)
+		new_file = (option->t == FALSE) ?
+			insert_name(all_path, option, &option->dir)
 			: insert_time(all_path, option, &option->dir, buff.st_mtimespec);
 	}
 	if ((!(buff.st_mode & S_IFDIR)) || option->in_rec)
 	{
-		new_file = (option->t == FALSE) ? insert_name(str, option, &option->files)
-			: insert_time(str, option, &option->files, buff.st_mtimespec);
+		if (!(new_file = (option->t == FALSE) ?
+				insert_name(str, option, &option->files)
+				: insert_time(str, option, &option->files, buff.st_mtimespec)))
+			err_malloc(option);
 		add_data(option, new_file, buff);
 	}
 	ft_memcpy(&(new_file->stat), &buff, sizeof(struct stat));

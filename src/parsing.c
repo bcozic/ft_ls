@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:19:49 by barbara           #+#    #+#             */
-/*   Updated: 2018/03/30 17:57:22 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/13 21:42:07 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	parsing(int argc, char **argv, t_option *option)
 {
 	int				i;
 
-	ioctl(0, TIOCGWINSZ , &(option->size_term));
+	ioctl(0, TIOCGWINSZ, &(option->size_term));
 	i = 0;
 	while (++i < argc)
 	{
@@ -45,7 +45,7 @@ void	option_full_name(char *str, t_option *option)
 	else if (!ft_strcmp(str, "--reverse"))
 		option->rev = TRUE;
 	else if (!ft_strcmp(str, "--help"))
-		display_help(option);
+		disp_help(option);
 	else
 		error_option(option, str);
 }

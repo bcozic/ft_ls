@@ -6,13 +6,13 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/03/30 19:50:03 by bcozic           ###   ########.fr        #
+#    Updated: 2018/04/07 15:35:52 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ls
 
-CFLAGS = #-Wall -Wextra -Werror -Weverything -g
+CFLAGS = -Wall -Wextra -Werror -Weverything -g
 
 SRC = main.c\
 	  parsing.c\
@@ -41,19 +41,16 @@ obj/%.o: src/%.c
 $(NAME) : $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(LIBFT)
 
-clean :
+clean : clean_libft
 	rm -f $(OBJ)
 
 clean_libft :
 	@make -C libft clean
 
-clean_printf :
-	@make -C ft_printf clean
-
 fclean_libft : clean_libft
 	@rm -f $(LIBFT)
 
-fclean : clean
+fclean : clean fclean_libft
 	@rm -f $(NAME)
 	@echo "exe deleted"
 
