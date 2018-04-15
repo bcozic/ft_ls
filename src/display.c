@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:42:13 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/15 14:50:14 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/15 18:54:21 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void		display_infos(t_option *option)
 		ft_printf("total %lu\n", option->dir_size);
 	if (option->files)
 		display_reg(option);
+	
 	free(option->path);
 	option->next_dir = NULL;
 	option->path = NULL;
