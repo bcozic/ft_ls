@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/04/13 21:58:23 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/15 14:50:17 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct			s_option
 {
 	t_file				*dir;
 	t_file				*files;
+	t_file				*next_dir;
 	char				*path;
 	t_bool				l;
 	t_bool				rec;

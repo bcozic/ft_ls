@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/13 22:02:32 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/15 14:57:07 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	get_link(t_file *file, t_option *option)
 {
 	ssize_t	len;
 
+	char	*full_name;
 	if (file->right[0] != 'l')
 	{
 		file->link = option->no_link;
@@ -23,8 +24,12 @@ static void	get_link(t_file *file, t_option *option)
 	}
 	if (!(file->link = (char *)malloc(sizeof(char) * 256)))
 		err_malloc(option);
+	if (!(full_name = ft_strjoin(option->path, file->name)))
+		err_malloc(option);
 	ft_strcpy(file->link, " -> ");
-	if ((len = readlink(file->name, file->link + 4, 252)) == -1)
+	len = readlink(full_name, file->link + 4, 252);
+	free(full_name);
+	if (len == -1)
 	{
 		perror(NULL);
 		other_err(option);
@@ -81,8 +86,12 @@ static void	add_data(t_option *option, t_file *file, struct stat buff)
 
 	if (option->l == TRUE)
 	{
-		if (!(file->user_name = ft_strdup(((getpwuid(buff.st_uid))->pw_name) ?
-				(getpwuid(buff.st_uid))->pw_name : "*")))
+		if (getpwuid(buff.st_uid) == NULL)
+		{
+			if (!(file->user_name = ft_itoa((int)buff.st_uid)))
+				err_malloc(option);
+		}
+		else if (!(file->user_name = ft_strdup(getpwuid(buff.st_uid)->pw_name)))
 			err_malloc(option);
 		if (!(file->grp_name = ft_strdup((getgrgid(buff.st_gid))->gr_name)))
 			err_malloc(option);

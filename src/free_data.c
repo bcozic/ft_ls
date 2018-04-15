@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 17:56:12 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/13 21:28:52 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/15 13:26:32 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void			free_option(t_option *option)
 			free(to_free->grp_name);
 		if (to_free->name)
 			free(to_free->name);
-		if (to_free->link != option->no_link)
+		if (to_free->link != option->no_link && to_free->link)
 			free(to_free->link);
 		free(to_free);
 		if (current == NULL)

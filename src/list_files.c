@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 14:57:24 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/13 21:44:20 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/15 14:47:03 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_file	*insert_name(char *str, t_option *option, t_file **list)
 	current = *list;
 	if (*list == NULL || cmp_name(current->name, str, option))
 		return (add_file(NULL, str, option, list));
-	while (current->next)
+	while (current->next != option->next_dir && current->next)
 	{
 		if (cmp_name(current->next->name, str, option))
 			return (add_file(current, str, option, list));
@@ -80,7 +80,7 @@ t_file	*insert_time(char *str, t_option *option, t_file **list, t_time time)
 	else if (cmp_time(time, current->stat.st_mtimespec, option) == 0)
 		if (cmp_name(current->name, str, option))
 			return (add_file(NULL, str, option, list));
-	while (current->next)
+	while (current->next != option->next_dir && current->next)
 	{
 		if (cmp_time(time, current->next->stat.st_mtimespec, option) == 1)
 			return (add_file(current, str, option, list));
