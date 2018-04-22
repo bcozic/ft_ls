@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 14:05:17 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/13 21:25:56 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:50:07 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	padd_name(t_option *option)
 {
 	int	rest;
 
-	if (option->size_term.ws_col && isatty(1))
+	if (option->size_term.ws_col && isatty(1) && option->col == FALSE)
 	{
 		option->file_per_line = (int)(((size_t)option->nb_files *
 			option->max_size_name) / (size_t)option->size_term.ws_col);

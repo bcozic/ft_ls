@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/04/15 14:50:17 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 20:27:03 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # include <stdio.h>
 # include "libft.h"
 
-# define RED "\033[1;31m"
-# define EOC "\033[0m"
+# define RED	"\033[1;31m"
+# define EOC	"\033[0m"
 
 typedef struct timespec	t_time;
 
@@ -56,6 +56,8 @@ typedef struct			s_option
 	t_bool				a;
 	t_bool				rev;
 	t_bool				t;
+	t_bool				col;
+	int					first;
 	struct winsize		size_term;
 	int					nb_files;
 	size_t				max_size_name;
@@ -83,13 +85,14 @@ int						cmp_name(char *name1, char *name2, t_option *option);
 t_file					*add_file(t_file *current, char *str, t_option *option,
 							t_file **list);
 void					free_option(t_option *option);
-void					remov_file(t_file **file);
+void					remov_file(t_file **file, t_option *option);
+void					remov_dir(t_file *dir, t_option *option);
 void					reset_size(t_option *option);
 void					disp_help(t_option *option) __attribute__((noreturn));
 void					error_option(t_option *option,
 							char *str) __attribute__((noreturn));
 void					err_malloc(t_option *option) __attribute__((noreturn));
-void					other_err(t_option *option) __attribute__ ((noreturn));
+void					other_err(t_option *option) __attribute__((noreturn));
 void					error_name_file(char *str);
 size_t					display_no_l(t_file *file,
 							size_t size, t_option *option);
@@ -98,5 +101,12 @@ void					display_reg(t_option *option);
 void					display_infos(t_option *option);
 char					*pad_time(t_file *file);
 void					padd_name(t_option *option);
+void					get_files(t_option *option, DIR *dir);
+void					get_l_infos(t_option *option, t_file *file,
+							struct stat buff);
+t_file					*add_file_lst(t_option *option, char *str,
+							struct stat buff, char *all_path);
+void					add_data(t_option *option, t_file *file,
+							struct stat buff);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:19:49 by barbara           #+#    #+#             */
-/*   Updated: 2018/04/15 13:48:41 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:21:43 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ void	option_short_name(char *str, t_option *option)
 			option->rev = TRUE;
 		else if (*str == 't')
 			option->t = TRUE;
+		else if (*str == '1')
+			option->col = TRUE;
 		else
 			error_option(option, str);
 }

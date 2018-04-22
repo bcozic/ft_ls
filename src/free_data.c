@@ -6,19 +6,23 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 17:56:12 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/15 13:26:32 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:57:45 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static t_file	*switch_to_free(t_option *option)
+static void		remov_item(t_file *it, t_option *option)
 {
-	t_file *file;
-
-	file = option->files;
-	option->files = NULL;
-	return (file);
+	if (it->user_name)
+		free(it->user_name);
+	if (it->grp_name)
+		free(it->grp_name);
+	if (it->name)
+		free(it->name);
+	if (it->link != option->no_link && it->link)
+		free(it->link);
+	free(it);
 }
 
 void			free_option(t_option *option)
@@ -29,45 +33,59 @@ void			free_option(t_option *option)
 	current = option->dir;
 	option->dir = NULL;
 	if (current == NULL)
-		switch_to_free(option);
+		current = option->files;
 	while (current)
 	{
 		to_free = current;
 		current = current->next;
-		if (to_free->user_name)
-			free(to_free->user_name);
-		if (to_free->grp_name)
-			free(to_free->grp_name);
-		if (to_free->name)
-			free(to_free->name);
-		if (to_free->link != option->no_link && to_free->link)
-			free(to_free->link);
-		free(to_free);
+		remov_item(to_free, option);
 		if (current == NULL)
-			switch_to_free(option);
+		{
+			current = option->files;
+			option->files = NULL;
+		}
 	}
 	if (option->path)
 		free(option->path);
 }
 
-void			remov_file(t_file **file)
+void			remov_file(t_file **file, t_option *option)
 {
 	t_file	*to_free;
 
 	to_free = *file;
 	*file = to_free->next;
-	if (to_free->user_name)
-		free(to_free->user_name);
-	if (to_free->grp_name)
-		free(to_free->grp_name);
-	free(to_free->name);
-	free(to_free);
+	remov_item(to_free, option);
+}
+
+void			remov_dir(t_file *dir, t_option *option)
+{
+	t_file	*current;
+	t_file	*to_free;
+
+	if (dir->name == option->dir->name)
+	{
+		remov_file(&option->dir, option);
+		return ;
+	}
+	current = option->dir;
+	if (!current->next)
+		return ;
+	while (current->next->name != dir->name)
+	{
+		current = current->next;
+		if (current == NULL)
+			return ;
+	}
+	to_free = current->next;
+	current->next = current->next->next;
+	remov_item(to_free, option);
 }
 
 void			reset_size(t_option *option)
 {
 	option->nb_files = 0;
-	option->max_size_name = 0;
+	option->max_size_name = 8;
 	option->size_usr = 0;
 	option->size_grp = 0;
 	option->file_per_line = 0;

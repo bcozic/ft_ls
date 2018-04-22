@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 11:02:45 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/15 13:18:02 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:43:02 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,12 @@ void	disp_help(t_option *option)
 void	error_option(t_option *option, char *str)
 {
 	if (str[0] == '-' && str[1] == '-')
-		ft_printf("ft_ls: unrecognized option '%s'\n"
-		"Try './ft_ls --help' for more information.\n", str);
+		ft_printf("ft_ls: unrecognized option '%s'\n", str);
 	else
-		ft_printf("ls: invalid option -- '%c'\n"
-		"Try './ft_ls --help' for more information.\n", *str);
+		ft_printf("ls: invalid option -- '%c'\n", *str);
+	ft_printf("Try './ft_ls --help' for more information.\n"
+			"usage: ./ft_ls [-alrRt] [--all] [--reverse]"
+			" [-- recursive] [--help] [file ...]\n");
 	free_option(option);
 	exit(1);
 }

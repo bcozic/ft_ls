@@ -6,24 +6,11 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:42:13 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/15 18:54:21 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:51:06 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
-static int	check_hide(char *str)
-{
-	int	i;
-
-	i = (int)ft_strlen(str);
-	while (--i >= 0 && (str[i] != '/' || i == (int)ft_strlen(str)))
-	{
-		if (str[i] == '.' && (i == 0 || str[i - 1] == '/'))
-			return (0);
-	}
-	return (1);
-}
 
 size_t		display_no_l(t_file *file, size_t size, t_option *option)
 {
@@ -38,7 +25,7 @@ size_t		display_no_l(t_file *file, size_t size, t_option *option)
 	}
 	current_size = (size_t)ft_printf("%s", file->name);
 	if (file->next == NULL && ((option->dir && !option->path)
-			|| (option->path && option->dir->next)))
+			|| (option->path && option->dir)))
 	{
 		write(1, "\n", 1);
 		return (0);
@@ -70,41 +57,39 @@ void		display_reg(t_option *option)
 	padd_name(option);
 	while (option->files)
 	{
-		if (option->l == TRUE)
+		if (option->l == TRUE && option->col == FALSE)
 			display_l(option->files, option);
 		else
 			size = display_no_l(option->files, size, option);
-		remov_file(&option->files);
+		remov_file(&option->files, option);
 	}
 }
 
 void		display_infos(t_option *option)
 {
 	DIR				*dir;
-	struct dirent	*file;
+	t_file			*ptr_dir;
 
-	if (option->nb_files != 0)
-		ft_printf("\n%s:\n", option->dir->name);
-	else if (option->dir->next)
+	ptr_dir = option->dir;
+	if (!option->first || option->nb_files != 0)
 		ft_printf("%s:\n", option->dir->name);
+	option->first = 0;
 	reset_size(option);
 	if (!(dir = opendir(option->dir->name)))
 		return ;
 	if (!(option->path = ft_strjoin(option->dir->name, "/")))
 		err_malloc(option);
 	option->next_dir = option->dir->next;
-	while ((file = readdir(dir)) != NULL)
-	{
-		if (option->a == TRUE || (check_hide(file->d_name)))
-			pars_file(file->d_name, option);
-	}
+	get_files(option, dir);
 	closedir(dir);
-	if (option->l == TRUE && option->dir_size != 0)
+	if (option->l == TRUE && option->files)
 		ft_printf("total %lu\n", option->dir_size);
+	remov_dir(ptr_dir, option);
 	if (option->files)
 		display_reg(option);
-	
 	free(option->path);
 	option->next_dir = NULL;
 	option->path = NULL;
+	if (option->dir)
+		ft_printf("\n");
 }

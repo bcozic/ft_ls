@@ -6,13 +6,13 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/03 19:08:56 by bcozic            #+#    #+#             */
-/*   Updated: 2018/03/30 13:32:04 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/22 19:42:19 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "ft_printf_data.h"
-#include <stdio.h>
+
 int		chr_arg(va_list va, const char *restrict format, int *i, char *buffer)
 {
 	int		nb[2];

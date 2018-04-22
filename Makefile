@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/04/15 13:56:00 by bcozic           ###   ########.fr        #
+#    Updated: 2018/04/22 19:50:33 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRC = main.c\
 	  display.c\
 	  free_data.c\
 	  def_padding.c\
-	  error.c
+	  error.c\
+	  get_files.c
 
 OBJ = $(addprefix obj/, $(SRC:.c=.o))
 
