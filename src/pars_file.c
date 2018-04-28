@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/22 20:26:37 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/28 18:53:35 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,12 @@ static void	find_rights(struct stat buff, t_file *file)
 		file->right[3 * i + 3] = (mode & (S_IXUSR >> (3 * i))) ? 'x' : '-';
 		i++;
 	}
+	if (mode & S_ISUID)
+		file->right[3] = (file->right[3] == 'x') ? 's' : 'S';
+	if (mode & S_ISGID)
+		file->right[6] = (file->right[6] == 'x') ? 's' : 'S';
+	if (mode & S_ISVTX)
+		file->right[9] = (file->right[9] == 'x') ? 't' : 'T';
 	file->right[10] = '\0';
 	file->right[11] = '\0';
 }
@@ -102,21 +108,21 @@ void		add_data(t_option *option, t_file *file, struct stat buff)
 void		pars_file(char *str, t_option *option)
 {
 	struct stat	buff;
-	t_file		*new_file;
 	char		*all_path;
+	t_bool		save;
 
 	if (!(all_path = ft_strjoin(option->path, str)))
 		err_malloc(option);
-	new_file = NULL;
 	if (lstat(all_path, &buff) == -1)
 	{
-		error_name_file(str);
+		save = option->rev;
+		option->rev = FALSE;
+		insert_name(all_path, option, &option->no_found);
+		option->rev = save;
 		free(all_path);
 		return ;
 	}
 	option->dir_size += (size_t)buff.st_blocks;
-	if (!(new_file = add_file_lst(option, str, buff, all_path)))
-		err_malloc(option);
-	ft_memcpy(&(new_file->stat), &buff, sizeof(struct stat));
+	add_file_lst(option, str, buff, all_path);
 	free(all_path);
 }

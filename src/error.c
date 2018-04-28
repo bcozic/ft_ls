@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 11:02:45 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/22 19:43:02 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/28 18:02:00 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,17 @@ void	disp_help(t_option *option)
 void	error_option(t_option *option, char *str)
 {
 	if (str[0] == '-' && str[1] == '-')
-		ft_printf("ft_ls: unrecognized option '%s'\n", str);
+	{
+		write(2, "ft_ls: unrecognized option '", 28);
+		write(2, str, ft_strlen(str));
+		write(2, "'\n", 2);
+	}
 	else
-		ft_printf("ls: invalid option -- '%c'\n", *str);
+	{
+		write(2, "ft_ls: invalid option -- '", 26);
+		write(2, str, 1);
+		write(2, "'\n", 2);
+	}
 	ft_printf("Try './ft_ls --help' for more information.\n"
 			"usage: ./ft_ls [-alrRt] [--all] [--reverse]"
 			" [-- recursive] [--help] [file ...]\n");
@@ -47,14 +55,21 @@ void	error_option(t_option *option, char *str)
 
 void	err_malloc(t_option *option)
 {
-	ft_printf(RED"ERROR malloc\n"EOC);
+	write(2, "ERROR malloc\n", 13);
 	free_option(option);
 	exit(2);
 }
 
-void	error_name_file(char *str)
+void	error_name_file(t_option *option)
 {
-	ft_printf("ft_ls: %s: No such file or directory\n", str);
+	while (option->no_found)
+	{
+		write(2, "ft_ls: ", 7);
+		write(2, option->no_found->name, ft_strlen(option->no_found->name));
+		write(2, ": No such file or directory\n", 28);
+		remov_file(&option->no_found, option);
+	}
+	option->first = 0;
 }
 
 void	other_err(t_option *option)
@@ -62,4 +77,11 @@ void	other_err(t_option *option)
 	perror(NULL);
 	free_option(option);
 	exit(2);
+}
+
+void	error_rights(t_file *file)
+{
+	write(2, "ft_ls: ", 7);
+	write(2, file->name, ft_strlen(file->name));
+	write(2, ": Permission denied\n", 20);
 }

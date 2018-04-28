@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/04/22 19:50:33 by bcozic           ###   ########.fr        #
+#    Updated: 2018/04/28 19:14:26 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ OBJ = $(addprefix obj/, $(SRC:.c=.o))
 
 LIBFT = libft/libft.a
 
-all : lib obj $(LIBFT) $(NAME)
+all : $(NAME)
 
 lib :
 	@make -C libft
@@ -39,7 +39,7 @@ obj :
 obj/%.o: src/%.c
 	gcc $(CFLAGS) -c $< -o $@ -I libft/includes -I includes
 
-$(NAME) : $(OBJ)
+$(NAME) : lib obj $(LIBFT) $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(LIBFT)
 
 clean : clean_libft

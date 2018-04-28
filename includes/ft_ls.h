@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/04/22 20:27:03 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/28 18:01:24 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,6 @@
 # include <unistd.h>
 # include <stdio.h>
 # include "libft.h"
-
-# define RED	"\033[1;31m"
-# define EOC	"\033[0m"
 
 typedef struct timespec	t_time;
 
@@ -49,6 +46,7 @@ typedef struct			s_option
 {
 	t_file				*dir;
 	t_file				*files;
+	t_file				*no_found;
 	t_file				*next_dir;
 	char				*path;
 	t_bool				l;
@@ -58,6 +56,8 @@ typedef struct			s_option
 	t_bool				t;
 	t_bool				col;
 	int					first;
+	int					first_file;
+	int					first_dir;
 	struct winsize		size_term;
 	int					nb_files;
 	size_t				max_size_name;
@@ -93,7 +93,8 @@ void					error_option(t_option *option,
 							char *str) __attribute__((noreturn));
 void					err_malloc(t_option *option) __attribute__((noreturn));
 void					other_err(t_option *option) __attribute__((noreturn));
-void					error_name_file(char *str);
+void					error_rights(t_file *file);
+void					error_name_file(t_option *option);
 size_t					display_no_l(t_file *file,
 							size_t size, t_option *option);
 void					display_l(t_file *file, t_option *option);
@@ -104,7 +105,7 @@ void					padd_name(t_option *option);
 void					get_files(t_option *option, DIR *dir);
 void					get_l_infos(t_option *option, t_file *file,
 							struct stat buff);
-t_file					*add_file_lst(t_option *option, char *str,
+void					add_file_lst(t_option *option, char *str,
 							struct stat buff, char *all_path);
 void					add_data(t_option *option, t_file *file,
 							struct stat buff);

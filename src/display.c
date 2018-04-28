@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:42:13 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/22 19:51:06 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/04/28 19:11:29 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ size_t		display_no_l(t_file *file, size_t size, t_option *option)
 {
 	size_t	current_size;
 
-	if ((size += option->max_size_name) > option->size_term.ws_col
-		|| option->current_line++ >= option->file_per_line)
+	if (((size += option->max_size_name) > option->size_term.ws_col
+		|| option->current_line++ >= option->file_per_line) && !option->first_file)
 	{
 		ft_printf("\n");
 		size = 0;
@@ -30,7 +30,7 @@ size_t		display_no_l(t_file *file, size_t size, t_option *option)
 		write(1, "\n", 1);
 		return (0);
 	}
-	if (file->next && size + option->max_size_name <= option->size_term.ws_col
+	else if (file->next && size + option->max_size_name <= option->size_term.ws_col
 		&& option->current_line < option->file_per_line)
 		ft_printf("% *c", option->max_size_name - current_size, ' ');
 	else if (!file->next)
@@ -55,14 +55,20 @@ void		display_reg(t_option *option)
 
 	size = 0;
 	padd_name(option);
+	option->first_file = 1;
 	while (option->files)
 	{
-		if (option->l == TRUE && option->col == FALSE)
+		if (option->l == TRUE)
 			display_l(option->files, option);
 		else
 			size = display_no_l(option->files, size, option);
 		remov_file(&option->files, option);
+		option->first_file = 0;
 	}
+	if (option->first_dir && option->dir)
+		ft_printf("\n");
+	option->first_dir = 0;
+	option->first = 0;
 }
 
 void		display_infos(t_option *option)
@@ -71,24 +77,28 @@ void		display_infos(t_option *option)
 	t_file			*ptr_dir;
 
 	ptr_dir = option->dir;
-	if (!option->first || option->nb_files != 0)
+	if (!option->first || option->dir->next)
 		ft_printf("%s:\n", option->dir->name);
 	option->first = 0;
+	option->first_dir = 0;
 	reset_size(option);
-	if (!(dir = opendir(option->dir->name)))
-		return ;
-	if (!(option->path = ft_strjoin(option->dir->name, "/")))
-		err_malloc(option);
-	option->next_dir = option->dir->next;
-	get_files(option, dir);
-	closedir(dir);
+	if ((dir = opendir(option->dir->name)))
+	{
+		if (!(option->path = ft_strjoin(option->dir->name, "/")))
+			err_malloc(option);
+			option->next_dir = option->dir->next;
+			get_files(option, dir);
+			closedir(dir);
+	}
+	else
+		error_rights(ptr_dir);
 	if (option->l == TRUE && option->files)
 		ft_printf("total %lu\n", option->dir_size);
 	remov_dir(ptr_dir, option);
 	if (option->files)
 		display_reg(option);
-	free(option->path);
 	option->next_dir = NULL;
+	free(option->path);
 	option->path = NULL;
 	if (option->dir)
 		ft_printf("\n");
