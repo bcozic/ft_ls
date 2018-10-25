@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 12:31:14 by barbara           #+#    #+#             */
-/*   Updated: 2018/04/28 18:00:58 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/24 14:14:03 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,15 @@ int	main(int argc, char **argv)
 {
 	t_option	option;
 	t_option	*ptr;
+	int			ret;
 
 	ptr = &option;
+	ret = 0;
 	ft_bzero(&option, sizeof(t_option));
 	option.first = 1;
 	option.first_dir = 1;
 	option.max_size_name = 8;
+	option.ret = &ret;
 	parsing(argc, argv, &option);
 	if (option.no_found)
 		error_name_file(&option);
@@ -33,5 +36,5 @@ int	main(int argc, char **argv)
 		display_infos(&option);
 	}
 	free_option(&option);
-	return (0);
+	return (ret);
 }

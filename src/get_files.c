@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/22 19:49:19 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/28 18:37:30 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/24 21:13:14 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void		get_files(t_option *option, DIR *dir)
 
 	while ((file = readdir(dir)) != NULL)
 	{
-		if (option->a == TRUE || (check_hide(file->d_name)))
+		if (option->a == T_TRUE || (check_hide(file->d_name)))
 			pars_file(file->d_name, option);
 	}
 }
@@ -55,34 +55,39 @@ void		get_l_infos(t_option *option, t_file *file, struct stat buff)
 		option->size_grp = (int)size;
 }
 
+t_file		*init_new_file(char *str, t_option *option,
+				t_file **list, struct stat *buff)
+{
+	if (option->t == T_FALSE)
+		return (insert_name(str, option, list));
+	else
+		return (insert_time(str, option, list, buff->st_mtimespec));
+}
+
 void		add_file_lst(t_option *option, char *str,
 				struct stat buff, char *all_path)
 {
-	t_file	*new_file;
-	struct stat buff2;
-	struct stat *ptr_buff;
+	t_file		*new_file;
+	struct stat	buff2;
+	struct stat	*ptr_buff;
 
 	ptr_buff = &buff2;
-	if (option->l == FALSE && (buff.st_mode & S_IFMT) == S_IFLNK)
+	if (option->l == T_FALSE && (buff.st_mode & S_IFMT) == S_IFLNK)
 		stat(all_path, ptr_buff);
 	else
 		ptr_buff = &buff;
 	new_file = NULL;
 	if ((ptr_buff->st_mode & S_IFMT) == S_IFDIR && (!option->in_rec
-		|| option->rec == TRUE) && !(option->in_rec
+		|| option->rec == T_TRUE) && !(option->in_rec
 		&& (!ft_strcmp(".", str) || !ft_strcmp("..", str))))
 	{
-		new_file = (option->t == FALSE) ?
-			insert_name(all_path, option, &option->dir)
-			: insert_time(all_path, option, &option->dir, buff.st_mtimespec);
+		new_file = init_new_file(all_path, option, &option->dir, &buff);
 		ft_memcpy(&(new_file->stat), &buff, sizeof(struct stat));
 	}
 	if (((ptr_buff->st_mode & S_IFMT) != S_IFDIR) || option->in_rec)
 	{
-		new_file = (option->t == FALSE) ?
-			insert_name(str, option, &option->files)
-			: insert_time(str, option, &option->files, buff.st_mtimespec);
-		add_data(option, new_file, buff);
+		new_file = init_new_file(str, option, &option->files, &buff);
+		add_data(option, new_file, buff, all_path);
 		ft_memcpy(&(new_file->stat), &buff, sizeof(struct stat));
 	}
 }

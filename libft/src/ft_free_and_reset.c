@@ -1,38 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memcpy.c                                        :+:      :+:    :+:   */
+/*   ft_free_and_reset.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/08 15:05:22 by bcozic            #+#    #+#             */
-/*   Updated: 2018/05/12 11:09:16 by bcozic           ###   ########.fr       */
+/*   Created: 2018/05/06 15:02:26 by bcozic            #+#    #+#             */
+/*   Updated: 2018/05/06 15:20:59 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <stdarg.h>
 #include "libft.h"
-#include <stdint.h>
 
-void	*ft_memcpy(void *dst, const void *src, size_t n)
+void	ft_free_and_reset(int nb, ...)
 {
-	size_t	i;
+	va_list	va;
+	void	**to_free;
 
-	i = 0;
-	while ((i * 8) < n - 4)
+	va_start(va, nb);
+	while (nb-- > 0)
 	{
-		*((int64_t *)dst + i) = *((const int64_t *)src + i);
-		i++;
+		to_free = va_arg(va, void**);
+		free(*to_free);
+		*to_free = NULL;
 	}
-	i *= 8;
-	if (i + 4 < n - 4)
-	{
-		*((int *)dst + i) = *((const int *)src + i);
-		i += 4;
-	}
-	while (i < n)
-	{
-		*((char *)dst + i) = *((const char *)src + i);
-		i++;
-	}
-	return (dst);
+	va_end(va);
 }

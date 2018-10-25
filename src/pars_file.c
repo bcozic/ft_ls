@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/28 18:53:35 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/24 21:14:30 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,12 @@ static char	find_type(mode_t type)
 	return (ret);
 }
 
-static void	find_rights(struct stat buff, t_file *file)
+static void	find_rights(struct stat buff, t_file *file, char *all_path)
 {
 	int		i;
 	mode_t	mode;
+	char	buffer[1024];
+	acl_t   acl;
 
 	mode = buff.st_mode;
 	i = 0;
@@ -82,25 +84,31 @@ static void	find_rights(struct stat buff, t_file *file)
 		file->right[6] = (file->right[6] == 'x') ? 's' : 'S';
 	if (mode & S_ISVTX)
 		file->right[9] = (file->right[9] == 'x') ? 't' : 'T';
-	file->right[10] = '\0';
+	file->right[10] = ' ';
+	if ((acl = acl_get_file(all_path, ACL_TYPE_EXTENDED)))
+		file->right[10] = '+';
+	if (listxattr(all_path, buffer, 1024, XATTR_NOFOLLOW))
+		file->right[10] = '@';
 	file->right[11] = '\0';
+	acl_free((void *)acl);
 }
 
-void		add_data(t_option *option, t_file *file, struct stat buff)
+void		add_data(t_option *option, t_file *file, struct stat buff, char *all_path)
 {
 	size_t			size;
 
-	if (option->l == TRUE)
+	if (option->l == T_TRUE)
 		get_l_infos(option, file, buff);
-	find_rights(buff, file);
+	find_rights(buff, file, all_path);
 	get_link(file, option);
-	if ((size = ft_strlen(file->name) + 6) > option->max_size_name)
-		option->max_size_name = size;
+	size = ft_strlen(file->name) + 1;
+	while (size > option->max_size_name)
+		option->max_size_name += 8;
 	option->nb_files++;
 	if ((size = (size_t)ft_nbrlen(buff.st_size) + 2) >
 			(size_t)option->max_size_size)
 		option->max_size_size = (int)size;
-	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 2) >
+	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 1) >
 	(size_t)option->size_links)
 		option->size_links = (int)size;
 }
@@ -116,7 +124,7 @@ void		pars_file(char *str, t_option *option)
 	if (lstat(all_path, &buff) == -1)
 	{
 		save = option->rev;
-		option->rev = FALSE;
+		option->rev = T_FALSE;
 		insert_name(all_path, option, &option->no_found);
 		option->rev = save;
 		free(all_path);

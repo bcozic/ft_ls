@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 18:10:54 by bcozic            #+#    #+#              #
-#    Updated: 2018/04/28 19:14:24 by bcozic           ###   ########.fr        #
+#    Updated: 2018/05/06 15:05:53 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,7 +87,8 @@ SRC = ft_abs.c\
 	  ft_lstlen.c\
 	  ft_realloc.c\
 	  ft_strup.c\
-	  get_next_line.c
+	  get_next_line.c\
+	  ft_free_and_reset.c
 
 SRC_PRINTF = ft_printf.c\
 			 chrflags.c\

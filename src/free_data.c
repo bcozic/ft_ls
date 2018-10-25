@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 17:56:12 by bcozic            #+#    #+#             */
-/*   Updated: 2018/04/22 19:57:45 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/24 15:44:28 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void			remov_file(t_file **file, t_option *option)
 	t_file	*to_free;
 
 	to_free = *file;
-	*file = to_free->next;
+	*file = (*file)->next;
 	remov_item(to_free, option);
 }
 
