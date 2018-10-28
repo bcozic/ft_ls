@@ -6,13 +6,23 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 12:31:14 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/24 14:14:03 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 20:15:01 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int	main(int argc, char **argv)
+static void	init_options(t_option *option, int *ret)
+{
+	ft_bzero(option, sizeof(t_option));
+	option->first = 1;
+	option->first_dir = 1;
+	option->max_size_name = 8;
+	option->ret = ret;
+	ioctl(0, TIOCGWINSZ, &(option->size_term));
+}
+
+int			main(int argc, char **argv)
 {
 	t_option	option;
 	t_option	*ptr;
@@ -20,11 +30,7 @@ int	main(int argc, char **argv)
 
 	ptr = &option;
 	ret = 0;
-	ft_bzero(&option, sizeof(t_option));
-	option.first = 1;
-	option.first_dir = 1;
-	option.max_size_name = 8;
-	option.ret = &ret;
+	init_options(&option, &ret);
 	parsing(argc, argv, &option);
 	if (option.no_found)
 		error_name_file(&option);

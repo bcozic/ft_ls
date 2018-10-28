@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:42:13 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/24 21:13:07 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 20:44:41 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void		display_no_l(t_file *file, t_option *option)
 	int i;
 
 	prec_file = file;
-		//ft_printf("NEW LINE");
 	while (file)
 	{
 		current_size = (size_t)ft_printf("%s", file->name);
@@ -65,19 +64,24 @@ void		display_l(t_file *file, t_option *option)
 	char	*time;
 
 	time = pad_time(file);
-	ft_printf("%s%*d %-*s%-*s%*lld %s %s%s\n", file->right, option->size_links,
-		file->stat.st_nlink, option->size_usr, file->user_name,
-		option->size_grp, file->grp_name, option->max_size_size,
-		file->stat.st_size, time + 4, file->name, file->link);
+	if (option->flag & DISP_GRP_NAME)
+		ft_printf("%s%*d %-*s%*lld %s %s%s\n", file->right, option->size_links,
+				file->stat.st_nlink,
+				option->size_grp, file->grp_name, option->max_size_size,
+				file->stat.st_size, time + 4, file->name, file->link);
+	else
+		ft_printf("%s%*d %-*s%-*s%*lld %s %s%s\n", file->right, option->size_links,
+				file->stat.st_nlink, option->size_usr, file->user_name,
+				option->size_grp, file->grp_name, option->max_size_size,
+				file->stat.st_size, time + 4, file->name, file->link);
 }
 
 void		display_reg(t_option *option)
 {
 	padd_name(option);
-	option->first_file = 1;
 	while (option->files)
 	{
-		if (option->l == T_TRUE)
+		if (option->flag & LONG_LIST_FORMAT)
 			display_l(option->files, option);
 		else
 		{
@@ -87,7 +91,6 @@ void		display_reg(t_option *option)
 			// 	write(1, "\n", 1);
 		}
 		remov_file(&option->files, option);
-		option->first_file = 0;
 	}
 	if (option->first_dir && option->dir)
 		ft_printf("\n");
@@ -110,13 +113,13 @@ void		display_infos(t_option *option)
 
 	ptr_dir = option->dir;
 	if (!option->first || option->dir->next)
-		ft_printf("%s:\n", option->dir->name);
+		ft_printf("%s:\n", option->dir->full_name);
 	option->first = 0;
 	option->first_dir = 0;
 	reset_size(option);
-	if ((dir = opendir(option->dir->name)))
+	if ((dir = opendir(option->dir->full_name)))
 	{
-		if (!(option->path = ft_strjoin(option->dir->name, "/")))
+		if (!(option->path = ft_strjoin(option->dir->full_name, "/")))
 			err_malloc(option);
 		option->next_dir = option->dir->next;
 		get_files(option, dir);
@@ -124,7 +127,7 @@ void		display_infos(t_option *option)
 	}
 	else
 		error_rights(ptr_dir, option);
-	if (option->l == T_TRUE && option->files)
+	if ((option->flag & LONG_LIST_FORMAT) && option->files)
 		ft_printf("total %lu\n", option->dir_size);
 	remov_dir(ptr_dir, option);
 	if (option->files)

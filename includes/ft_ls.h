@@ -6,12 +6,25 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/24 21:11:30 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 21:32:24 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LS_H
 # define FT_LS_H
+
+# define SEC_IN_SIX_MONTH	15778463
+# define LONG_LIST_FORMAT	0x1
+# define DISP_GRP_NAME		0x2
+# define RECURSIVE			0x4
+# define ALL				0x8
+# define REVERS				0x10
+# define SORT_TIME			0x20
+# define SORT_LST_ACCESS	0x40
+# define NO_SORT			0x80
+# define COLOMN				0x100
+# define DIRECTORY_LIST		0x200
+# define SORT_FILE_CREATION	0x400
 
 # include <stdlib.h>
 # include <sys/stat.h>
@@ -32,7 +45,9 @@ typedef struct timespec	t_time;
 typedef struct			s_file
 {
 	char				*name;
+	char				*full_name;
 	struct stat			stat;
+	struct timespec		time;
 	size_t				max_size;
 	char				right[16];
 	char				*user_name;
@@ -52,28 +67,19 @@ typedef struct			s_option
 	t_file				*next_dir;
 	char				*path;
 	int					*ret;
-	t_bool				l;
-	t_bool				rec;
-	t_bool				a;
-	t_bool				rev;
-	t_bool				t;
-	t_bool				col;
+	uint32_t			flag;
 	int					first;
-	int					first_file;
 	int					first_dir;
-	struct winsize		size_term;
 	int					nb_files;
-	size_t				max_size_name;
 	int					size_usr;
 	int					size_grp;
-	int					file_per_line;
 	int					nb_lines;
-	int wait;
-	int					current_line;
 	int					in_rec;
 	int					max_size_size;
 	int					size_links;
-	char				no_link[4];
+	char				no_link[8];
+	struct winsize		size_term;
+	size_t				max_size_name;
 	size_t				dir_size;
 }						t_option;
 
@@ -84,8 +90,8 @@ void					option_short_name(char *str, t_option *option);
 t_file					*insert_name(char *str, t_option *option,
 							t_file **list);
 t_file					*insert_time(char *str, t_option *option,
-							t_file **list, t_time time);
-int						cmp_time(t_time time1, t_time time2, t_option *option);
+							t_file **list, t_time time_spec);
+t_file					*insert_end(char *str, t_option *option, t_file **list);
 int						cmp_name(char *name1, char *name2, t_option *option);
 t_file					*add_file(t_file *current, char *str, t_option *option,
 							t_file **list);
@@ -111,7 +117,7 @@ void					get_l_infos(t_option *option, t_file *file,
 void					add_file_lst(t_option *option, char *str,
 							struct stat buff, char *all_path);
 void					add_data(t_option *option, t_file *file,
-							struct stat buff, char *all_path);
+							struct stat buff);
 t_file					*init_new_file(char *str, t_option *option,
 							t_file **list, struct stat *buff);
 							t_bool		is_file_next(t_file *file, int nb);

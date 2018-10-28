@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/24 21:14:30 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 21:15:47 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 static void	get_link(t_file *file, t_option *option)
 {
 	ssize_t	len;
-	char	*full_name;
 
 	if (file->right[0] != 'l')
 	{
@@ -24,11 +23,10 @@ static void	get_link(t_file *file, t_option *option)
 	}
 	if (!(file->link = (char *)malloc(sizeof(char) * 256)))
 		err_malloc(option);
-	if (!(full_name = ft_strjoin(option->path, file->name)))
+	if (!(file->full_name = ft_strjoin(option->path, file->name)))
 		err_malloc(option);
 	ft_strcpy(file->link, " -> ");
-	len = readlink(full_name, file->link + 4, 252);
-	free(full_name);
+	len = readlink(file->full_name, file->link + 4, 252);
 	if (len == -1)
 	{
 		perror(NULL);
@@ -85,7 +83,7 @@ static void	find_rights(struct stat buff, t_file *file, char *all_path)
 	if (mode & S_ISVTX)
 		file->right[9] = (file->right[9] == 'x') ? 't' : 'T';
 	file->right[10] = ' ';
-	if ((acl = acl_get_file(all_path, ACL_TYPE_EXTENDED)))
+	if ((acl = acl_get_link_np(all_path, ACL_TYPE_EXTENDED)))
 		file->right[10] = '+';
 	if (listxattr(all_path, buffer, 1024, XATTR_NOFOLLOW))
 		file->right[10] = '@';
@@ -93,13 +91,13 @@ static void	find_rights(struct stat buff, t_file *file, char *all_path)
 	acl_free((void *)acl);
 }
 
-void		add_data(t_option *option, t_file *file, struct stat buff, char *all_path)
+void		add_data(t_option *option, t_file *file, struct stat buff)
 {
 	size_t			size;
 
-	if (option->l == T_TRUE)
+	if (option->flag & LONG_LIST_FORMAT)
 		get_l_infos(option, file, buff);
-	find_rights(buff, file, all_path);
+	find_rights(buff, file, file->full_name);
 	get_link(file, option);
 	size = ft_strlen(file->name) + 1;
 	while (size > option->max_size_name)
@@ -111,6 +109,12 @@ void		add_data(t_option *option, t_file *file, struct stat buff, char *all_path)
 	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 1) >
 	(size_t)option->size_links)
 		option->size_links = (int)size;
+	if (option->flag & SORT_LST_ACCESS)
+		file->time = buff.st_atimespec;
+	else if (option->flag & SORT_LST_ACCESS)
+		file->time = buff.st_birthtimespec;
+	else
+		file->time = buff.st_mtimespec;
 }
 
 void		pars_file(char *str, t_option *option)
@@ -123,14 +127,13 @@ void		pars_file(char *str, t_option *option)
 		err_malloc(option);
 	if (lstat(all_path, &buff) == -1)
 	{
-		save = option->rev;
-		option->rev = T_FALSE;
-		insert_name(all_path, option, &option->no_found);
-		option->rev = save;
+		save = option->flag;
+		option->flag &= (0XFFFFFFFF ^ REVERS);
+		insert_name(str, option, &option->no_found);
+		option->flag = save;
 		free(all_path);
 		return ;
 	}
 	option->dir_size += (size_t)buff.st_blocks;
 	add_file_lst(option, str, buff, all_path);
-	free(all_path);
 }

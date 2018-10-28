@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:19:49 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/24 21:12:44 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 21:05:22 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@ void	parsing(int argc, char **argv, t_option *option)
 {
 	int				i;
 
-	ioctl(0, TIOCGWINSZ, &(option->size_term));
-	i = 0;
-	while (++i < argc)
+	i = 1;
+	while (i < argc)
 	{
 		if (ft_strcmp(argv[i], "--") == 0)
 		{
@@ -29,32 +28,39 @@ void	parsing(int argc, char **argv, t_option *option)
 			option_short_name(argv[i], option);
 		else
 			break ;
+		i++;
 	}
 	if (i == argc)
 		pars_file(".", option);
-	i--;
-	while (++i < argc)
-		pars_file(argv[i], option);
+	while (i < argc)
+		pars_file(argv[i++], option);
 }
 
 void	option_short_name(char *str, t_option *option)
 {
 	while (*(++str))
 		if (*str == 'l')
-			option->l = T_TRUE;
+			option->flag |= LONG_LIST_FORMAT;
+		else if (*str == 'g')
+			option->flag |= (DISP_GRP_NAME | LONG_LIST_FORMAT);
 		else if (*str == 'R')
-			option->rec = T_TRUE;
+			option->flag |= RECURSIVE;
 		else if (*str == 'a')
-			option->a = T_TRUE;
+			option->flag |= ALL;
+		else if (*str == 'f')
+			option->flag |= (NO_SORT | ALL);
 		else if (*str == 'r')
-			option->rev = T_TRUE;
+			option->flag |= REVERS;
 		else if (*str == 't')
-			option->t = T_TRUE;
+			option->flag |= SORT_TIME;
+		else if (*str == 'd')
+			option->flag |= DIRECTORY_LIST;
+		else if (*str == 'u')
+			option->flag |= SORT_LST_ACCESS;
+		else if (*str == 'U')
+			option->flag |= SORT_FILE_CREATION;
 		else if (*str == '1')
-		{
-			option->col = T_TRUE;
-			option->l = T_FALSE;
-		}
+			option->flag = (option->flag | COLOMN) & (0xFFFFFFFF ^ LONG_LIST_FORMAT);
 		else
 			error_option(option, str);
 }

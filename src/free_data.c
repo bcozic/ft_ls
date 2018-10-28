@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 17:56:12 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/24 15:44:28 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/28 20:40:47 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static void		remov_item(t_file *it, t_option *option)
 		free(it->grp_name);
 	if (it->name)
 		free(it->name);
+	if (it->full_name)
+		free(it->full_name);
 	if (it->link != option->no_link && it->link)
 		free(it->link);
 	free(it);
@@ -63,7 +65,7 @@ void			remov_dir(t_file *dir, t_option *option)
 	t_file	*current;
 	t_file	*to_free;
 
-	if (dir->name == option->dir->name)
+	if (dir->full_name == option->dir->full_name)
 	{
 		remov_file(&option->dir, option);
 		return ;
@@ -71,7 +73,7 @@ void			remov_dir(t_file *dir, t_option *option)
 	current = option->dir;
 	if (!current->next)
 		return ;
-	while (current->next->name != dir->name)
+	while (current->next->full_name != dir->full_name)
 	{
 		current = current->next;
 		if (current == NULL)
@@ -88,8 +90,6 @@ void			reset_size(t_option *option)
 	option->max_size_name = 8;
 	option->size_usr = 0;
 	option->size_grp = 0;
-	option->file_per_line = 0;
-	option->current_line = 0;
 	option->max_size_size = 0;
 	option->dir_size = 0;
 	option->size_links = 0;
