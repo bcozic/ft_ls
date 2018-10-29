@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/28 21:15:47 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/29 20:17:56 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,86 +35,44 @@ static void	get_link(t_file *file, t_option *option)
 	file->link[len + 4] = '\0';
 }
 
-static char	find_type(mode_t type)
+static void	which_display_time(t_option *option, t_file *file)
 {
-	char	ret;
-
-	ret = 0;
-	if (type == S_IFSOCK)
-		ret = 's';
-	else if (type == S_IFLNK)
-		ret = 'l';
-	else if (type == S_IFWHT)
-		ret = ' ';
-	else if (type == S_IFREG)
-		ret = '-';
-	else if (type == S_IFDIR)
-		ret = 'd';
-	else if (type == S_IFCHR)
-		ret = 'c';
-	else if (type == S_IFBLK)
-		ret = 'b';
-	else if (type == S_IFIFO)
-		ret = 'p';
-	return (ret);
+	if (option->flag & SORT_LST_ACCESS)
+		file->time = file->stat.st_atimespec;
+	else if (option->flag & SORT_FILE_CREATION)
+		file->time = file->stat.st_birthtimespec;
+	else if (option->flag & SORT_STATUS_CHANGED)
+		file->time = file->stat.st_ctimespec;
+	else
+		file->time = file->stat.st_mtimespec;
 }
 
-static void	find_rights(struct stat buff, t_file *file, char *all_path)
-{
-	int		i;
-	mode_t	mode;
-	char	buffer[1024];
-	acl_t   acl;
-
-	mode = buff.st_mode;
-	i = 0;
-	file->right[0] = find_type(mode & S_IFMT);
-	while (i < 3)
-	{
-		file->right[3 * i + 1] = (mode & (S_IRUSR >> (3 * i))) ? 'r' : '-';
-		file->right[3 * i + 2] = (mode & (S_IWUSR >> (3 * i))) ? 'w' : '-';
-		file->right[3 * i + 3] = (mode & (S_IXUSR >> (3 * i))) ? 'x' : '-';
-		i++;
-	}
-	if (mode & S_ISUID)
-		file->right[3] = (file->right[3] == 'x') ? 's' : 'S';
-	if (mode & S_ISGID)
-		file->right[6] = (file->right[6] == 'x') ? 's' : 'S';
-	if (mode & S_ISVTX)
-		file->right[9] = (file->right[9] == 'x') ? 't' : 'T';
-	file->right[10] = ' ';
-	if ((acl = acl_get_link_np(all_path, ACL_TYPE_EXTENDED)))
-		file->right[10] = '+';
-	if (listxattr(all_path, buffer, 1024, XATTR_NOFOLLOW))
-		file->right[10] = '@';
-	file->right[11] = '\0';
-	acl_free((void *)acl);
-}
-
-void		add_data(t_option *option, t_file *file, struct stat buff)
+void		add_data(t_option *option, t_file *file,
+				struct stat *buff, char *all_path)
 {
 	size_t			size;
 
+	file->full_name = all_path;
+	ft_memcpy(&(file->stat), buff, sizeof(struct stat));
 	if (option->flag & LONG_LIST_FORMAT)
-		get_l_infos(option, file, buff);
-	find_rights(buff, file, file->full_name);
+		get_l_infos(option, file, *buff);
+	find_rights(*buff, file);
 	get_link(file, option);
 	size = ft_strlen(file->name) + 1;
 	while (size > option->max_size_name)
 		option->max_size_name += 8;
 	option->nb_files++;
-	if ((size = (size_t)ft_nbrlen(buff.st_size) + 2) >
+	if ((size = (size_t)ft_nbrlen(buff->st_size) + 2) >
 			(size_t)option->max_size_size)
 		option->max_size_size = (int)size;
-	if ((size = (size_t)ft_nbrlen(buff.st_nlink) + 1) >
+	if ((size = (size_t)ft_nbrlen(buff->st_nlink) + 1) >
 	(size_t)option->size_links)
 		option->size_links = (int)size;
-	if (option->flag & SORT_LST_ACCESS)
-		file->time = buff.st_atimespec;
-	else if (option->flag & SORT_LST_ACCESS)
-		file->time = buff.st_birthtimespec;
-	else
-		file->time = buff.st_mtimespec;
+	if ((option->flag & INODE_NUMBER)
+			&& ((size = (size_t)ft_nbrlen((int)buff->st_ino) + 1)
+			> (size_t)option->size_inode))
+		option->size_inode = (int)size;
+	which_display_time(option, file);
 }
 
 void		pars_file(char *str, t_option *option)
@@ -135,5 +93,5 @@ void		pars_file(char *str, t_option *option)
 		return ;
 	}
 	option->dir_size += (size_t)buff.st_blocks;
-	add_file_lst(option, str, buff, all_path);
+	add_file_lst(option, str, &buff, all_path);
 }

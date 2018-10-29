@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/30 14:05:17 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/28 20:38:12 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/29 19:35:49 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,18 @@ void		padd_name(t_option *option)
 {
 	int	file_per_line;
 
-	if (option->size_term.ws_col && isatty(1) && !(option->flag & COLOMN))
-		file_per_line = (int)((size_t)option->size_term.ws_col / option->max_size_name);
+	if (!isatty(1))
+		option->size_term.ws_col = 80;
+	if ((option->size_term.ws_col && isatty(1)
+			&& !(option->flag & COLOMN)) || (option->flag & FORCE_COLOMN))
+		file_per_line = (int)((size_t)option->size_term.ws_col
+				/ (option->max_size_name + (size_t)option->size_inode));
 	else
 		file_per_line = 1;
 	if (file_per_line == 0)
 		file_per_line = 1;
-	option->nb_lines = option->nb_files / file_per_line + ((option->nb_files % file_per_line) ? 1 : 0);
+	option->nb_lines = option->nb_files / file_per_line
+			+ ((option->nb_files % file_per_line) ? 1 : 0);
 }
 
 static int	find_year(char *str)

@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 11:02:45 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/24 18:50:06 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/29 19:00:22 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 
 void	error_option(t_option *option, char *str)
 {
-	write(2, "./ft_ls: illegal option -- '", 28);
+	write(2, "./ft_ls: illegal option -- ", 27);
 	write(2, str, 1);
-	write(2, "'\n", 2);
-	ft_printf("usage: ./ft_ls [-alrRt] [file ...]\n");
+	write(2, "\nusage: ./ft_ls [-ACRSUacdfgilrtu1] [file ...]\n", 47);
 	free_option(option);
 	exit(1);
 }

@@ -6,25 +6,31 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/28 21:32:24 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/29 20:21:27 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LS_H
 # define FT_LS_H
 
-# define SEC_IN_SIX_MONTH	15778463
-# define LONG_LIST_FORMAT	0x1
-# define DISP_GRP_NAME		0x2
-# define RECURSIVE			0x4
-# define ALL				0x8
-# define REVERS				0x10
-# define SORT_TIME			0x20
-# define SORT_LST_ACCESS	0x40
-# define NO_SORT			0x80
-# define COLOMN				0x100
-# define DIRECTORY_LIST		0x200
-# define SORT_FILE_CREATION	0x400
+# define SEC_IN_SIX_MONTH		15778463
+
+# define ALL_EXCEPT				0x1
+# define FORCE_COLOMN			0x2
+# define RECURSIVE				0x4
+# define SORT_SIZE				0x8
+# define SORT_FILE_CREATION		0x10
+# define ALL					0x20
+# define SORT_STATUS_CHANGED	0x40
+# define DIRECTORY_LIST			0x80
+# define NO_SORT				0x100
+# define DISP_GRP_NAME			0x200
+# define INODE_NUMBER			0x400
+# define LONG_LIST_FORMAT		0x800
+# define REVERS					0x1000
+# define SORT_TIME				0x2000
+# define SORT_LST_ACCESS		0x4000
+# define COLOMN					0x8000
 
 # include <stdlib.h>
 # include <sys/stat.h>
@@ -57,7 +63,7 @@ typedef struct			s_file
 }						t_file;
 
 typedef enum			e_bool
-{T_FALSE = 0, T_TRUE}		t_bool;
+{T_FALSE = 0, T_TRUE}	t_bool;
 
 typedef struct			s_option
 {
@@ -77,7 +83,8 @@ typedef struct			s_option
 	int					in_rec;
 	int					max_size_size;
 	int					size_links;
-	char				no_link[8];
+	int					size_inode;
+	char				no_link[4];
 	struct winsize		size_term;
 	size_t				max_size_name;
 	size_t				dir_size;
@@ -85,14 +92,13 @@ typedef struct			s_option
 
 void					parsing(int argc, char **argv, t_option *option);
 void					pars_file(char *str, t_option *option);
-void					option_full_name(char *str, t_option *option);
-void					option_short_name(char *str, t_option *option);
 t_file					*insert_name(char *str, t_option *option,
 							t_file **list);
 t_file					*insert_time(char *str, t_option *option,
 							t_file **list, t_time time_spec);
+t_file					*insert_size(char *str, t_option *option, t_file **list,
+							struct stat *buff);
 t_file					*insert_end(char *str, t_option *option, t_file **list);
-int						cmp_name(char *name1, char *name2, t_option *option);
 t_file					*add_file(t_file *current, char *str, t_option *option,
 							t_file **list);
 void					free_option(t_option *option);
@@ -105,8 +111,6 @@ void					err_malloc(t_option *option) __attribute__((noreturn));
 void					other_err(t_option *option) __attribute__((noreturn));
 void					error_rights(t_file *file, t_option *option);
 void					error_name_file(t_option *option);
-void					display_no_l(t_file *file, t_option *option);
-void					display_l(t_file *file, t_option *option);
 void					display_reg(t_option *option);
 void					display_infos(t_option *option);
 char					*pad_time(t_file *file);
@@ -115,11 +119,11 @@ void					get_files(t_option *option, DIR *dir);
 void					get_l_infos(t_option *option, t_file *file,
 							struct stat buff);
 void					add_file_lst(t_option *option, char *str,
-							struct stat buff, char *all_path);
+							struct stat *buff, char *all_path);
 void					add_data(t_option *option, t_file *file,
-							struct stat buff);
-t_file					*init_new_file(char *str, t_option *option,
-							t_file **list, struct stat *buff);
-							t_bool		is_file_next(t_file *file, int nb);
+							struct stat *buff, char *all_path);
+void					find_rights(struct stat buff, t_file *file);
+void					display_col(t_file *file, t_option *option);
+int						cmp_name(char *name1, char *name2, t_option *option);
 
 #endif
