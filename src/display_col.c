@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 19:40:18 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/29 19:44:31 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/10/29 21:00:03 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,19 @@ static void		print_name(t_file *file, t_option *option)
 	}
 	current_size += (size_t)ft_printf("%s", file->name);
 	if (is_file_next(file, option->nb_lines))
-		ft_printf("% *c", option->max_size_name
-				+ (size_t)option->size_inode - current_size, ' ');
+	{
+		if (option->flag & FORCE_COLOMN)
+		{
+			while ((int)(option->max_size_name + (size_t)option->size_inode - current_size) > 0)
+			{
+				ft_printf("%c", 9);
+				current_size += 8;
+			}
+		}
+		else
+			ft_printf("% *c", option->max_size_name
+					+ (size_t)option->size_inode - current_size, ' ');
+	}
 }
 
 void			display_col(t_file *file, t_option *option)
