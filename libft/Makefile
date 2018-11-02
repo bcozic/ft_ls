@@ -6,11 +6,17 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 18:10:54 by bcozic            #+#    #+#              #
-#    Updated: 2018/05/06 15:05:53 by bcozic           ###   ########.fr        #
+#    Updated: 2018/11/02 23:45:34 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
+
+NO_COLOR=\x1b[0m
+
+GREEN=\x1b[32;01m
+
+RED=\x1b[31;01m
 
 CFLAGS = -Wall -Wextra -Werror -Weverything -g
 
@@ -104,6 +110,13 @@ OBJ = $(addprefix obj/, $(SRC:.c=.o))
 
 OBJ_PRINTF = $(addprefix ft_printf/obj/, $(SRC_PRINTF:.c=.o))
 
+INC_PATH = includes/
+
+INCLUDES_PRINTF = $(INC_PATH)ft_printf_data.h\
+				  $(INC_PATH)ft_printf.h
+
+INCLUDE_LIBFT = $(INC_PATH)libft.h
+
 all : $(NAME)
 
 obj :
@@ -112,24 +125,24 @@ obj :
 ft_printf/obj :
 	mkdir ft_printf/obj
 
-ft_printf/obj/%.o: ft_printf/src/%.c
+ft_printf/obj/%.o: ft_printf/src/%.c $(INCLUDE_LIBFT) $(INCLUDES_PRINTF)
 	gcc $(CFLAGS) -c $< -o $@ -I includes
 
-obj/%.o: src/%.c
+obj/%.o: src/%.c $(INCLUDE_LIBFT)
 	gcc $(CFLAGS) -c $< -o $@ -I includes
 
 $(NAME) : obj ft_printf/obj $(OBJ) $(OBJ_PRINTF)
 	ar rc $(NAME) $(OBJ) $(OBJ_PRINTF)
 	ranlib $(NAME)
-	@echo "Compile OK"
+	@echo "$(GREEN)Libft OK$(NO_COLOR)"
 
 clean :
 	rm -f $(OBJ) $(OBJ_PRINTF)
-	@echo "Obj Deleted"
+	@echo "$(RED)Obj libft Deleted$(NO_COLOR)"
 
 fclean : clean
 	rm -f $(NAME)
-	@echo "Program Deleted"
+	@echo "$(RED)$(NAME) Deleted$(NO_COLOR)"
 
 re : fclean all
 
