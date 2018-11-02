@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 19:32:47 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/29 20:19:54 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/01 20:58:15 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,17 @@ static void	specific_perms(t_file *file, mode_t mode)
 	file->right[10] = ' ';
 	if ((acl = acl_get_link_np(file->full_name, ACL_TYPE_EXTENDED)))
 		file->right[10] = '+';
-	if (listxattr(file->full_name, buffer, 1024, XATTR_NOFOLLOW))
+	if (listxattr(file->full_name, buffer, 1024, XATTR_NOFOLLOW) > 0)
 		file->right[10] = '@';
 	acl_free((void *)acl);
 }
 
-void		find_rights(struct stat buff, t_file *file)
+void		find_rights(t_file *file)
 {
 	int		i;
 	mode_t	mode;
 
-	mode = buff.st_mode;
+	mode = file->stat.st_mode;
 	i = 0;
 	file->right[0] = find_type(mode & S_IFMT);
 	while (i < 3)

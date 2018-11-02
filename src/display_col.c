@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 19:40:18 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/29 21:00:03 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/02 00:39:11 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ static void		print_name(t_file *file, t_option *option)
 	{
 		if (option->flag & FORCE_COLOMN)
 		{
-			while ((int)(option->max_size_name + (size_t)option->size_inode - current_size) > 0)
+			while ((int)(option->max_size_name
+					+ (size_t)option->size_inode - current_size) > 0)
 			{
 				ft_printf("%c", 9);
 				current_size += 8;

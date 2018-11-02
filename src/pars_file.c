@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/10/29 20:17:56 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/02 00:41:11 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ static void	get_link(t_file *file, t_option *option)
 		return ;
 	}
 	if (!(file->link = (char *)malloc(sizeof(char) * 256)))
-		err_malloc(option);
-	if (!(file->full_name = ft_strjoin(option->path, file->name)))
 		err_malloc(option);
 	ft_strcpy(file->link, " -> ");
 	len = readlink(file->full_name, file->link + 4, 252);
@@ -47,31 +45,37 @@ static void	which_display_time(t_option *option, t_file *file)
 		file->time = file->stat.st_mtimespec;
 }
 
-void		add_data(t_option *option, t_file *file,
-				struct stat *buff, char *all_path)
+static void	add_data_file(t_option *option, t_file *file)
 {
 	size_t			size;
 
-	file->full_name = all_path;
-	ft_memcpy(&(file->stat), buff, sizeof(struct stat));
 	if (option->flag & LONG_LIST_FORMAT)
-		get_l_infos(option, file, *buff);
-	find_rights(*buff, file);
-	get_link(file, option);
+		get_l_infos(option, file);
 	size = ft_strlen(file->name) + 1;
 	while (size > option->max_size_name)
 		option->max_size_name += 8;
 	option->nb_files++;
-	if ((size = (size_t)ft_nbrlen(buff->st_size) + 2) >
+	if ((size = (size_t)ft_nbrlen(file->stat.st_size) + 2) >
 			(size_t)option->max_size_size)
 		option->max_size_size = (int)size;
-	if ((size = (size_t)ft_nbrlen(buff->st_nlink) + 1) >
+	if ((size = (size_t)ft_nbrlen(file->stat.st_nlink) + 1) >
 	(size_t)option->size_links)
 		option->size_links = (int)size;
 	if ((option->flag & INODE_NUMBER)
-			&& ((size = (size_t)ft_nbrlen((int)buff->st_ino) + 1)
+			&& ((size = (size_t)ft_nbrlen((int)file->stat.st_ino) + 1)
 			> (size_t)option->size_inode))
 		option->size_inode = (int)size;
+}
+
+void		add_data(t_option *option, t_file *file,
+				struct stat *buff, char *all_path)
+{
+	file->full_name = all_path;
+	ft_memcpy(&(file->stat), buff, sizeof(struct stat));
+	find_rights(file);
+	get_link(file, option);
+	if (!option->is_reg)
+		add_data_file(option, file);
 	which_display_time(option, file);
 }
 

@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/10/29 20:09:28 by bcozic           ###   ########.fr        #
+#    Updated: 2018/11/02 01:54:29 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ SRC = main.c\
 	  rights.c\
 	  display_col.c\
 	  sort_time.c\
-	  sort_size.c
+	  sort_size.c\
+	  check_islink.c
 
 OBJ = $(addprefix obj/, $(SRC:.c=.o))
 

@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/29 20:21:27 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/02 01:54:17 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ typedef struct			s_option
 	int					max_size_size;
 	int					size_links;
 	int					size_inode;
+	int					is_reg;
+	int					is_arg;
 	char				no_link[4];
 	struct winsize		size_term;
 	size_t				max_size_name;
@@ -109,6 +111,7 @@ void					error_option(t_option *option,
 							char *str) __attribute__((noreturn));
 void					err_malloc(t_option *option) __attribute__((noreturn));
 void					other_err(t_option *option) __attribute__((noreturn));
+void					err_no_name(t_option *option) __attribute__((noreturn));
 void					error_rights(t_file *file, t_option *option);
 void					error_name_file(t_option *option);
 void					display_reg(t_option *option);
@@ -116,14 +119,15 @@ void					display_infos(t_option *option);
 char					*pad_time(t_file *file);
 void					padd_name(t_option *option);
 void					get_files(t_option *option, DIR *dir);
-void					get_l_infos(t_option *option, t_file *file,
-							struct stat buff);
+void					get_l_infos(t_option *option, t_file *file);
 void					add_file_lst(t_option *option, char *str,
 							struct stat *buff, char *all_path);
 void					add_data(t_option *option, t_file *file,
 							struct stat *buff, char *all_path);
-void					find_rights(struct stat buff, t_file *file);
+void					find_rights(t_file *file);
 void					display_col(t_file *file, t_option *option);
 int						cmp_name(char *name1, char *name2, t_option *option);
+int						is_link(t_option *option, char *all_path,
+							struct stat **ptr_buff, struct stat *buff);
 
 #endif

@@ -6,11 +6,18 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:19:49 by barbara           #+#    #+#             */
-/*   Updated: 2018/10/29 19:20:03 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/02 01:02:10 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+void		err_no_name(t_option *option)
+{
+	write(2, "./ft_ls: fts_open: No such file or directory\n", 45);
+	free_option(option);
+	exit(1);
+}
 
 static int	short_name_part1(char *str, t_option *option)
 {
@@ -95,5 +102,9 @@ void		parsing(int argc, char **argv, t_option *option)
 	if (i == argc)
 		pars_file(".", option);
 	while (i < argc)
+	{
+		if (!argv[i][0])
+			err_no_name(option);
 		pars_file(argv[i++], option);
+	}
 }
