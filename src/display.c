@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:42:13 by bcozic            #+#    #+#             */
-/*   Updated: 2018/11/02 01:58:13 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/15 18:26:41 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,16 @@ static void	display_l(t_file *file, t_option *option)
 	if (option->flag & INODE_NUMBER)
 		ft_printf("%*d ", option->size_inode - 1, file->stat.st_ino);
 	if (option->flag & DISP_GRP_NAME)
-		ft_printf("%s%*d %-*s%*lld %s %s%s\n", file->right, option->size_links,
-				file->stat.st_nlink,
-				option->size_grp, file->grp_name, option->max_size_size,
-				file->stat.st_size, time + 4, file->name, file->link);
+	{
+		file->user_name[0] = 0;
+		option->size_usr = 0;
+	}
+	if (file->is_spe)
+		ft_printf("%s%*d %-*s%-*s%*d, %*d %s %s%s\n", file->right,
+				option->size_links, file->stat.st_nlink,
+				option->size_usr, file->user_name, option->size_grp,
+				file->grp_name, 5, file->majeur, 3, file->minor,
+				time + 4, file->name, file->link);
 	else
 		ft_printf("%s%*d %-*s%-*s%*lld %s %s%s\n", file->right,
 				option->size_links, file->stat.st_nlink,

@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 17:56:12 by bcozic            #+#    #+#             */
-/*   Updated: 2018/11/02 01:49:26 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/15 18:57:13 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ void			free_option(t_option *option)
 	current = option->dir;
 	option->dir = NULL;
 	if (current == NULL)
+	{
 		current = option->files;
+		option->files = NULL;
+	}
 	while (current)
 	{
 		to_free = current;

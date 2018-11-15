@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/20 10:22:56 by barbara           #+#    #+#             */
-/*   Updated: 2018/11/02 23:21:26 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/15 18:16:04 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,10 @@ typedef struct			s_file
 	struct stat			stat;
 	struct timespec		time;
 	size_t				max_size;
-	char				right[16];
+	int					is_spe;
+	int					majeur;
+	int					minor;
+	char				right[20];
 	char				*user_name;
 	char				*grp_name;
 	char				*link;
@@ -124,7 +127,7 @@ void					add_file_lst(t_option *option, char *str,
 							struct stat *buff, char *all_path);
 void					add_data(t_option *option, t_file *file,
 							struct stat *buff, char *all_path);
-void					find_rights(t_file *file);
+void					find_rights(t_file *file, t_option *option);
 void					display_col(t_file *file, t_option *option);
 int						cmp_name(char *name1, char *name2, t_option *option);
 int						is_link(t_option *option, char *all_path,

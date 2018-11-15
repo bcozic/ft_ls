@@ -6,13 +6,22 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/29 19:32:47 by bcozic            #+#    #+#             */
-/*   Updated: 2018/11/01 20:58:15 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/15 18:57:35 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static char	find_type(mode_t type)
+static void	special_device(t_file *file, t_option *option)
+{
+	file->is_spe = 1;
+	file->majeur = ((uint64_t)(file->stat.st_rdev) & 0xff000000) >> 24;
+	file->minor = (uint64_t)(file->stat.st_rdev) & 0x00ffffff;
+	if (option->max_size_size < 10)
+		option->max_size_size = 10;
+}
+
+static char	find_type(mode_t type, t_file *file, t_option *option)
 {
 	char	ret;
 
@@ -33,6 +42,8 @@ static char	find_type(mode_t type)
 		ret = 'b';
 	else if (type == S_IFIFO)
 		ret = 'p';
+	if (ret == 'c' || ret == 'b')
+		special_device(file, option);
 	return (ret);
 }
 
@@ -55,14 +66,14 @@ static void	specific_perms(t_file *file, mode_t mode)
 	acl_free((void *)acl);
 }
 
-void		find_rights(t_file *file)
+void		find_rights(t_file *file, t_option *option)
 {
 	int		i;
 	mode_t	mode;
 
 	mode = file->stat.st_mode;
 	i = 0;
-	file->right[0] = find_type(mode & S_IFMT);
+	file->right[0] = find_type(mode & S_IFMT, file, option);
 	while (i < 3)
 	{
 		file->right[3 * i + 1] = (mode & (S_IRUSR >> (3 * i))) ? 'r' : '-';

@@ -6,7 +6,7 @@
 #    By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/19 12:22:35 by barbara           #+#    #+#              #
-#    Updated: 2018/11/02 23:48:25 by bcozic           ###   ########.fr        #
+#    Updated: 2018/11/14 20:26:54 by bcozic           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,11 +45,11 @@ INC_FT_LS = includes
 
 INCLUDE_FT_LS = $(INC_FT_LS)/ft_ls.h
 
-INCLUDE_LIB = $(INC_LIB)/libft.h
+all : lib obj $(NAME)
 
-all : obj lib $(NAME)
+$(LIBFT) : lib
 
-lib : $(INCLUDE_LIB)
+lib :
 	@make -C libft
 
 obj :
@@ -58,7 +58,7 @@ obj :
 obj/%.o: src/%.c $(INCLUDE_FT_LS)
 	gcc $(CFLAGS) -c $< -o $@ -I $(INC_LIB) -I $(INC_FT_LS)
 
-$(NAME) : $(OBJ) $(LIBFT)
+$(NAME) : $(LIBFT) $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(LIBFT)
 	@echo "$(GREEN)$(NAME) OK$(NO_COLOR)"
 
@@ -78,4 +78,4 @@ fclean : clean fclean_libft
 
 re : fclean all
 	
-.PHONY : all lib clean clean_libft fclean_libft fclean re
+.PHONY : all clean clean_libft fclean_libft fclean re

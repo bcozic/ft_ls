@@ -6,7 +6,7 @@
 /*   By: bcozic <bcozic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 12:24:41 by bcozic            #+#    #+#             */
-/*   Updated: 2018/11/02 00:41:11 by bcozic           ###   ########.fr       */
+/*   Updated: 2018/11/15 18:13:17 by bcozic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void		add_data(t_option *option, t_file *file,
 {
 	file->full_name = all_path;
 	ft_memcpy(&(file->stat), buff, sizeof(struct stat));
-	find_rights(file);
+	find_rights(file, option);
 	get_link(file, option);
 	if (!option->is_reg)
 		add_data_file(option, file);
